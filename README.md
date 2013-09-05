@@ -5,15 +5,18 @@ Some tools to extend the javascript localStorage feature: Cross-domain localStor
 
 * **cross_domain_storage.js**
   Allow to share values in localStorage between different domains (or subdomains).
+  
 * **lstorage.js**
   Store an item list with a given maximun number of elements in localStorage (avoid infinite growing).
+  
 * **cross_domain_lstorage.js**
   By using cross_domain_storaje.js, store an item list with a given maximun number of elements which can be shared between different domains.
 
 **There are some use examples in the index.html file.**
 
 *Note:*
-*In order to see the stored values, in **Chrome** you can go to **Right click->Inspect element->Resources** and unfold the Local Storage tree.*
+
+*In order to see the stored values, in Chrome you can go to "Right click->Inspect element->Resources" and unfold the Local Storage tree.*
 
 
 cross_domain_storage.js
@@ -25,8 +28,8 @@ You need to put the **crossd_iframe.html** in your server, and add your domain t
 
 Constructor:
 * CDStorage(origin, path);
-    * origin The URL where the iframe file is located. i.e: "http://www.example.com"
-    * path Path to the iframe file in origin. i.e: "/path/to/iframe.html"
+    * origin The URL where the iframe file is located. i.e: `"http://www.example.com"`
+    * path Path to the iframe file in origin. i.e: `"/path/to/iframe.html"`
  
 Functions:
 * getItem(key, callback)
