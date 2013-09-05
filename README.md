@@ -3,17 +3,17 @@ localStorage-tools
 
 Some tools to extend the javascript localStorage feature: Cross-domain localStorage, limit the number of elements (avoid infinite growing...)
 
-* cross_domain_storage.js
+* **cross_domain_storage.js**
   Allow to share values in localStorage between different domains (or subdomains).
-* lstorage.js
+* **lstorage.js**
   Store an item list with a given maximun number of elements in localStorage (avoid infinite growing).
-* cross_domain_lstorage.js
+* **cross_domain_lstorage.js**
   By using cross_domain_storaje.js, store an item list with a given maximun number of elements which can be shared between different domains.
 
-There are some use examples in the index.html file.
+**There are some use examples in the index.html file.**
 
-> Note:
-> In order to see the stored values, in *Chrome* you can go to *Right click->Inspect element->Resources* and unfold the Local Storage tree.
+*Note:*
+*In order to see the stored values, in **Chrome** you can go to **Right click->Inspect element->Resources** and unfold the Local Storage tree.*
 
 
 cross_domain_storage.js
@@ -21,7 +21,7 @@ cross_domain_storage.js
 
 Cross domain storage based on: http://www.nczonline.net/blog/2010/09/07/learning-from-xauth-cross-domain-localstorage/
 
-You need to put the *crossd_iframe.html* in your server, and add your domain to the *whitelist* (allowed domains) var in the file.
+You need to put the **crossd_iframe.html** in your server, and add your domain to the **whitelist** (allowed domains) var in the file.
 
 Constructor:
 * CDStorage(origin, path);
@@ -76,6 +76,7 @@ lstorage.js
 -----------
 
 Store an item list with a given maximun number of elements in localStorage.
+
 *It's a queue: if the limit is reached, then first in - first out.*
 *If a previously present item is added (with either `set(key, item)` or `add(key)` methods), it will be put last in the queue again.*
 
@@ -85,13 +86,13 @@ Constructor:
   var_name Var name in localStorage
 
 It can be used as:
-* a dictionary with key-value pairs. *Functions*: 
+* a dictionary with key-value pairs. **Functions**: 
     * set(key, value)
       `value` must be serializable by JSON.stringify method.
     * get(key)
        If `key` does not exists, returns null
        
-* an item list. *Functions*:
+* an item list. **Functions**:
     * add(item)
       Add `item` to the list.
     * exists(item)
@@ -117,7 +118,7 @@ cross_domain_lstorage.js
 
 Store an item list with a given maximun number of elements which can be shared between different domains.
 
-It uses *cross_domain_storage.js and crossd_iframe.html files*.
+It uses **cross_domain_storage.js and crossd_iframe.html files**.
 
 ### Usage example:
 
