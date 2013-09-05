@@ -3,13 +3,13 @@ localStorage-tools
 
 Some tools to extend the javascript localStorage feature: Cross-domain localStorage, limit the number of elements (avoid infinite growing...)
 
-* **cross_domain_storage.js**
+* **js/tools/cross_domain_storage.js**
   Allow to share values in localStorage between different domains (or subdomains).
   
-* **lstorage.js**
+* **js/tools/lstorage.js**
   Store an item list with a given maximun number of elements in localStorage (avoid infinite growing).
   
-* **cross_domain_lstorage.js**
+* **js/tools/cross_domain_lstorage.js**
   By using cross_domain_storaje.js, store an item list with a given maximun number of elements which can be shared between different domains.
 
 **There are some use examples in the index.html file.**

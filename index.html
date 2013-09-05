@@ -1,9 +1,9 @@
 <html>
 	<head>
-		<script type="text/javascript" src="jquery.js"></script>
-		<script type="text/javascript" src="lstorage.js"></script>
-		<script type="text/javascript" src="cross_domain_storage.js"></script>
-		<script type="text/javascript" src="cross_domain_lstorage.js"></script>
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/tools/lstorage.js"></script>
+		<script type="text/javascript" src="js/tools/cross_domain_storage.js"></script>
+		<script type="text/javascript" src="js/tools/cross_domain_lstorage.js"></script>
 	</head>
 	<body>
 		<script type="text/javascript">
@@ -11,14 +11,14 @@
 	         * Testing Local Storage Lists
 	         */
 			ls1 = new LStorage(50, 'local_1');
-			ls2 = new LStorage(1000, 'local_2');
+			ls2 = new LStorage(500, 'local_2');
 
 			//Note that the specified number of items (50 and 100) are smaller 
 			//than the number of keys to store (100 and 200 respectively)
 			for(var i = 0; i<=100; i++)
 				ls1.set("key"+i, {'val': 'value'+i});
 
-			for(var i = 0; i<=2000; i++)
+			for(var i = 0; i<=1000; i++)
 				ls2.add("values_"+i);
 
 			
