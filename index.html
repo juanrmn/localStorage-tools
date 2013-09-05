@@ -1,0 +1,46 @@
+<html>
+	<head>
+		<script type="text/javascript" src="jquery.js"></script>
+		<script type="text/javascript" src="lstorage.js"></script>
+		<script type="text/javascript" src="cross_domain_storage.js"></script>
+		<script type="text/javascript" src="cross_domain_lstorage.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript">
+	        /* 
+	         * Testing Local Storage Lists
+	         */
+			ls1 = new LStorage(50, 'local_1');
+			ls2 = new LStorage(1000, 'local_2');
+
+			//Note that the specified number of items (50 and 100) are smaller 
+			//than the number of keys to store (100 and 200 respectively)
+			for(var i = 0; i<=100; i++)
+				ls1.set("key"+i, {'val': 'value'+i});
+
+			for(var i = 0; i<=2000; i++)
+				ls2.add("values_"+i);
+
+			
+			/*
+			 * Testing Cross Domain Local Storage
+			 */
+	        storage = new CDStorage("http://localhost", "/localStorage/crossd_iframe.html");
+	        
+			cdls1 = new CDLStorage(5, 'crossD_storage', storage);
+			cdls2 = new CDLStorage(200, 'crossD_storage_2', storage);
+			
+			cdls1.ready(function(){
+				cdls1.set("cross_key", {'crossd':'Cross Domain Data Stored!!! :D'});
+				
+				if(cdls1.exists("cross_key")){
+					alert("Obtained: " + JSON.stringify(cdls1.get("cross_key")));
+				}
+			});
+			cdls2.ready(function(){
+				for(var i = 0; i<=1000; i++)
+					cdls2.set("cross_list"+i);
+			});
+		</script>
+	</body>
+</html>
