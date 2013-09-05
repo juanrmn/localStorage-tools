@@ -78,7 +78,7 @@ $.when(
 lstorage.js
 -----------
 
-Store an item list with a given maximun number of elements in localStorage.
+Store item lists with a given maximun number of elements in localStorage.
 
 *It's a queue: if the limit is reached, then first in - first out.*
 *If a previously present item is added (with either `set(key, item)` or `add(key)` methods), it will be put last in the queue again.*
@@ -119,7 +119,7 @@ for(var i = 0; i<=2000; i++)
 cross_domain_lstorage.js
 ------------------------
 
-Store an item list with a given maximun number of elements which can be shared between different domains.
+Store item lists with a given maximun number of elements which can be shared between different domains.
 
 It uses **cross_domain_storage.js and crossd_iframe.html files**.
 
