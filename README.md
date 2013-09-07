@@ -104,16 +104,30 @@ It can be used as:
 ### Usage example:
 
 ```javascript
-ls1 = new LStorage(100, 'local_1');
-ls2 = new LStorage(1000, 'local_2');
+ls1 = new LStorage(20, 'local_1');
+ls2 = new LStorage(500, 'local_2');
 
-//Note that the specified number of items (100 and 1000) are smaller 
-//than the number of keys to store (200 and 2000 respectively)
-for(var i = 0; i<=200; i++)
-    ls1.set("key"+i, {'val': 'value'+i});
-
-for(var i = 0; i<=2000; i++)
+//Note that the specified number of items (20 and 500) are smaller 
+//than the number of keys to store (100 and 1000 respectively)
+for(var i = 0; i<=100; i++)
+    ls1.set("key-"+i, {'val': 'value'+i});
+			    
+for(var i = 0; i<=100; i++){
+    value = ls1.get("key-"+i);
+    if(value){
+        //you'll need a <div id="results"></div> in your test page...
+        document.getElementById('results').innerHTML += "<br/>found: key-"+i+", value: "+JSON.stringify(value);
+    }
+}
+			
+//a simple list...
+for(var i = 0; i<=1000; i++)
     ls2.add("values_"+i);
+			    
+for(var i = 0; i<=1000; i++){
+    if(ls2.exists("values_"+i))
+        document.getElementById('results').innerHTML += "<br/>found: key-"+i;
+}
 ```
 
 cross_domain_lstorage.js
@@ -130,24 +144,32 @@ It uses **cross_domain_storage.js and crossd_iframe.html files**.
 //Also you have to include your "origin domain" in the whitelist in crossd_iframe.html (in this case would be
 // "localhost" or perhaps your computer name if you are doing local testing...):
 storage = new CDStorage("http://localhost", "/localStorage/crossd_iframe.html");
-    
+
 cdls1 = new CDLStorage(5, 'crossD_storage', storage);
 cdls2 = new CDLStorage(20, 'crossD_storage_2', storage);
-	
+
 cdls1.ready(function(){
-    cdls1.set("cross_key", {'crossd':'Cross Domain Data Stored!! :D'});
+    cdls1.set("cross_key", {'a_key':'Cross Domain Data Stored!!! :D', 'another_key':'yea'});
 
     if(cdls1.exists("cross_key")){
         value = cdls1.get("cross_key");
-        alert("Obtained: " + JSON.stringify(value));
+        //you'll need a <div id="results"></div> in your test page...
+        document.getElementById('results').innerHTML += "<br/>cros_key: " + JSON.stringify(value);
     }
 });
 
 cdls2.ready(function(){
-    for(var i = 0; i<=1000; i++){
-        cdls2.set("cross_list"+i);
+    for(var i = 0; i&lt;=1000; i++){
+        cdls2.set("cross_list-"+i);
     }
-	//...
+    //...
+});
+//...
+cdls2.ready(function(){
+    for(var i = 0; i<=1000; i++){
+	if(cdls2.exists("cross_list-"+i))
+	    document.getElementById('results').innerHTML += "<br/>found: cross_list-"+i;
+    }
 });
 ```
 
