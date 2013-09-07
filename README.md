@@ -104,9 +104,11 @@ It can be used as:
 ### Usage example:
 
 ```javascript
-ls1 = new LStorage(100, 'local_1');
-ls2 = new LStorage(1000, 'local_2');
+ls1 = new LStorage(20, 'local_1');
+ls2 = new LStorage(500, 'local_2');
 
+//Note that the specified number of items (20 and 500) are smaller 
+//than the number of keys to store (100 and 1000 respectively)
 for(var i = 0; i<=100; i++)
     ls1.set("key-"+i, {'val': 'value'+i});
 			    
