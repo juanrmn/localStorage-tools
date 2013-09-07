@@ -31,16 +31,24 @@
 			cdls2 = new CDLStorage(200, 'crossD_storage_2', storage);
 			
 			cdls1.ready(function(){
-				cdls1.set("cross_key", {'crossd':'Cross Domain Data Stored!!! :D'});
+				cdls1.set("cross_key", {'a_key':'Cross Domain Data Stored!!! :D', 'another_key':'yea'});
 				
 				if(cdls1.exists("cross_key")){
-					alert("Obtained: " + JSON.stringify(cdls1.get("cross_key")));
+					document.getElementById('results').innerHTML += "<br/>cros_key: " + JSON.stringify(cdls1.get("cross_key"));
 				}
 			});
 			cdls2.ready(function(){
 				for(var i = 0; i<=1000; i++)
-					cdls2.set("cross_list"+i);
+					cdls2.set("cross_list-"+i);
+			});
+			//...
+			cdls2.ready(function(){
+				for(var i = 0; i<=1000; i++){
+					if(cdls2.exists("cross_list-"+i))
+						document.getElementById('results').innerHTML += "<br/>found: cross_list-"+i;
+				}
 			});
 		</script>
+		<div id="results"></div>
 	</body>
 </html>
