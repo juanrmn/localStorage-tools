@@ -135,7 +135,7 @@ cross_domain_lstorage.js
 
 Store item lists with a given maximun number of elements which can be shared between different domains.
 
-It uses **cross_domain_storage.js and crossd_iframe.html files**.
+It uses **jQuery, cross_domain_storage.js and crossd_iframe.html files**.
 
 ### Usage example:
 
