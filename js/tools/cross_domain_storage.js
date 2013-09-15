@@ -30,7 +30,7 @@ function CDStorage(origin, path){
  * 
  */
 CDStorage.prototype = {
-	constructor: CDStorage,
+    constructor: CDStorage,
 
     init: function(){
         var that = this;
@@ -52,57 +52,57 @@ CDStorage.prototype = {
     },
 
     getItem: function(key, callback){
-    	if(this.supported){
-	    	var request = {
-	    			id: ++this._id,
-	    			type: 'get',
-	                key: key
-	            },
-	            data = {
-	                request: request,
-	                callback: callback
-	            };
-	    	if(jQuery){
-	    		data.deferred = jQuery.Deferred();
-	    	}
-	
-	        if(this._iframeReady){
-	            this._sendRequest(data);
-	        }else{
-	            this._queue.push(data);
-	        }
-	        
-	        if(jQuery){
-	        	return data.deferred.promise();
-	        }
-    	}
+        if(this.supported){
+            var request = {
+                    id: ++this._id,
+                    type: 'get',
+                    key: key
+                },
+                data = {
+                    request: request,
+                    callback: callback
+                };
+            if(jQuery){
+                data.deferred = jQuery.Deferred();
+            }
+    
+            if(this._iframeReady){
+                this._sendRequest(data);
+            }else{
+                this._queue.push(data);
+            }
+            
+            if(jQuery){
+                return data.deferred.promise();
+            }
+        }
     },
 
     setItem: function(key, value){
-    	if(this.supported){
-	    	var request = {
-	    			id: ++this._id,
-	    			type: 'set',
-	                key: key,
-	                value: value
-	            },
-	            data = {
-	                request: request
-	            };
-	    	if(jQuery){
-	    		data.deferred = jQuery.Deferred();
-	    	}
-	
-	        if(this._iframeReady){
-	            this._sendRequest(data);
-	        }else{
-	            this._queue.push(data);
-	        }
-	        
-	        if(jQuery){
-	        	return data.deferred.promise();
-	        }
-    	}
+        if(this.supported){
+            var request = {
+                    id: ++this._id,
+                    type: 'set',
+                    key: key,
+                    value: value
+                },
+                data = {
+                    request: request
+                };
+            if(jQuery){
+                data.deferred = jQuery.Deferred();
+            }
+    
+            if(this._iframeReady){
+                this._sendRequest(data);
+            }else{
+                this._queue.push(data);
+            }
+            
+            if(jQuery){
+                return data.deferred.promise();
+            }
+        }
     },
 
     //private methods
@@ -128,10 +128,10 @@ CDStorage.prototype = {
         if(event.origin == this._origin){
             var data = JSON.parse(event.data);
             if(typeof this._requests[data.id].deferred != 'undefined'){
-            	this._requests[data.id].deferred.resolve(data.value);
+                this._requests[data.id].deferred.resolve(data.value);
             }
             if(typeof this._requests[data.id].callback == 'function'){
-            	this._requests[data.id].callback(data.key, data.value);
+                this._requests[data.id].callback(data.key, data.value);
             }
             delete this._requests[data.id];
         }

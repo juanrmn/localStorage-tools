@@ -7,7 +7,7 @@
 (function(){
 
     //allowed domains
-    var whitelist = ["localhost"];
+    var whitelist = ["localhost", "gaia"];
 
     function verifyOrigin(origin){
         var domain = origin.replace(/^https?:\/\/|:\d{1,4}$/g, "").toLowerCase(),
@@ -30,16 +30,16 @@
             
             if(request.type == 'get')
             {
-            	value = localStorage.getItem(request.key);
-            	event.source.postMessage(JSON.stringify({id: request.id, key:request.key, value: value}), event.origin);
+                value = localStorage.getItem(request.key);
+                event.source.postMessage(JSON.stringify({id: request.id, key:request.key, value: value}), event.origin);
             }
             else if(request.type == 'set')
             {
-            	localStorage.setItem(request.key, request.value);
+                localStorage.setItem(request.key, request.value);
             }
             else if(request.type == 'unset')
             {
-            	localStorage.removeItem(request.key);
+                localStorage.removeItem(request.key);
             }
         }
     }

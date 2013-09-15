@@ -1,71 +1,71 @@
 <html>
-	<head>
-		<script type="text/javascript" src="js/jquery.js"></script>
-		<script type="text/javascript" src="js/tools/lstorage.js"></script>
-		<script type="text/javascript" src="js/tools/cross_domain_storage.js"></script>
-		<script type="text/javascript" src="js/tools/cross_domain_lstorage.js"></script>
-	</head>
-	<body>
-		<script type="text/javascript">
-		$(document).ready(function(){
-	        /* 
-	         * Testing Local Storage Lists
-	         */
-			ls1 = new LStorage(20, 'local_1');
-			ls2 = new LStorage(500, 'local_2');
+    <head>
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/tools/lstorage.js"></script>
+        <script type="text/javascript" src="js/tools/cross_domain_storage.js"></script>
+        <script type="text/javascript" src="js/tools/cross_domain_lstorage.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+        $(document).ready(function(){
+            /* 
+             * Testing Local Storage Lists
+             */
+            ls1 = new LStorage(20, 'local_1');
+            ls2 = new LStorage(500, 'local_2');
 
-			//Note that the specified number of items (20 and 500) are smaller 
-			//than the number of keys to store (100 and 1000 respectively)
-			for(var i = 0; i<=100; i++)
-			    ls1.set("key-"+i, {'val': 'value'+i});
-			    
-			for(var i = 0; i<=100; i++){
-			    value = ls1.get("key-"+i);
-			    if(value){
-			        //you'll need a <div id="results"></div> in your test page...
-			        document.getElementById('results').innerHTML += "<br/>found: key-"+i+", value: "+JSON.stringify(value);
-			    }
-			}
-			
-			//a simple list...
-			for(var i = 0; i<=1000; i++)
-			    ls2.add("values_"+i);
-			    
-			for(var i = 0; i<=1000; i++){
-			    if(ls2.exists("values_"+i))
-			        document.getElementById('results').innerHTML += "<br/>found: key-"+i;
-			}
+            //Note that the specified number of items (20 and 500) are smaller 
+            //than the number of keys to store (100 and 1000 respectively)
+            for(var i = 0; i<=100; i++)
+                ls1.set("key-"+i, {'val': 'value'+i});
+                
+            for(var i = 0; i<=100; i++){
+                value = ls1.get("key-"+i);
+                if(value){
+                    //you'll need a <div id="results"></div> in your test page...
+                    document.getElementById('results').innerHTML += "<br/>found: key-"+i+", value: "+JSON.stringify(value);
+                }
+            }
+            
+            //a simple list...
+            for(var i = 0; i<=1000; i++)
+                ls2.add("values_"+i);
+                
+            for(var i = 0; i<=1000; i++){
+                if(ls2.exists("values_"+i))
+                    document.getElementById('results').innerHTML += "<br/>found: key-"+i;
+            }
 
-			document.getElementById('results').innerHTML += "<br/>--------------<br/>";
-			
-			/*
-			 * Testing Cross Domain Local Storage
-			 */
-	        storage = new CDStorage("http://localhost", "/localStorage/crossd_iframe.html");
-	        
-			cdls1 = new CDLStorage(5, 'crossD_storage', storage);
-			cdls2 = new CDLStorage(200, 'crossD_storage_2', storage);
-			
-			cdls1.ready(function(){
-				cdls1.set("cross_key", {'a_key':'Cross Domain Data Stored!!! :D', 'another_key':'yea'});
-				
-				if(cdls1.exists("cross_key")){
-					document.getElementById('results').innerHTML += "<br/>cros_key: " + JSON.stringify(cdls1.get("cross_key"));
-				}
-			});
-			cdls2.ready(function(){
-				for(var i = 0; i<=1000; i++)
-					cdls2.set("cross_list-"+i);
-			});
-			//...
-			cdls2.ready(function(){
-				for(var i = 0; i<=1000; i++){
-					if(cdls2.exists("cross_list-"+i))
-						document.getElementById('results').innerHTML += "<br/>found: cross_list-"+i;
-				}
-			});
-		});
-		</script>
-		<div id="results"></div>
-	</body>
+            document.getElementById('results').innerHTML += "<br/>--------------<br/>";
+            
+            /*
+             * Testing Cross Domain Local Storage
+             */
+            storage = new CDStorage("http://localhost", "/localStorage/crossd_iframe.html");
+            
+            cdls1 = new CDLStorage(5, 'crossD_storage', storage);
+            cdls2 = new CDLStorage(200, 'crossD_storage_2', storage);
+            
+            cdls1.ready(function(){
+                cdls1.set("cross_key", {'a_key':'Cross Domain Data Stored!!! :D', 'another_key':'yea'});
+                
+                if(cdls1.exists("cross_key")){
+                    document.getElementById('results').innerHTML += "<br/>cros_key: " + JSON.stringify(cdls1.get("cross_key"));
+                }
+            });
+            cdls2.ready(function(){
+                for(var i = 0; i<=1000; i++)
+                    cdls2.set("cross_list-"+i);
+            });
+            //...
+            cdls2.ready(function(){
+                for(var i = 0; i<=1000; i++){
+                    if(cdls2.exists("cross_list-"+i))
+                        document.getElementById('results').innerHTML += "<br/>found: cross_list-"+i;
+                }
+            });
+        });
+        </script>
+        <div id="results"></div>
+    </body>
 </html>
