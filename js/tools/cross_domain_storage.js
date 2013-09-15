@@ -14,6 +14,15 @@ function CDStorage(origin, path){
     this._queue = [];
     this._requests = {};
     this._id = 0;
+    
+    this._check_supports = function(){
+        try{
+            return window.postMessage && window.JSON && 'localStorage' in window && window['localStorage'] !== null;
+        }catch(e){
+            return false;
+        }
+    };
+    this.supported = this._check_supports();
 }
 
 /** 
@@ -26,72 +35,74 @@ CDStorage.prototype = {
     init: function(){
         var that = this;
 
-        if(!this._iframe){
-            if(window.postMessage && window.JSON && window.localStorage){
-                this._iframe = document.createElement("iframe");
-                this._iframe.style.cssText = "position:absolute;width:1px;height:1px;left:-9999px;";
-                document.body.appendChild(this._iframe);
+        if(!this._iframe && this.supported){
+            this._iframe = document.createElement("iframe");
+            this._iframe.style.cssText = "position:absolute;width:1px;height:1px;left:-9999px;";
+            document.body.appendChild(this._iframe);
 
-                if(window.addEventListener){
-                    this._iframe.addEventListener("load", function(){ that._iframeLoaded(); }, false);
-                    window.addEventListener("message", function(event){ that._handleMessage(event); }, false);
-                }else if(this._iframe.attachEvent){
-                    this._iframe.attachEvent("onload", function(){ that._iframeLoaded(); }, false);
-                    window.attachEvent("onmessage", function(event){ that._handleMessage(event); });
-                }
-                this._iframe.src = this._origin + this._path;
+            if(window.addEventListener){
+                this._iframe.addEventListener("load", function(){ that._iframeLoaded(); }, false);
+                window.addEventListener("message", function(event){ that._handleMessage(event); }, false);
+            }else if(this._iframe.attachEvent){
+                this._iframe.attachEvent("onload", function(){ that._iframeLoaded(); }, false);
+                window.attachEvent("onmessage", function(event){ that._handleMessage(event); });
             }
+            this._iframe.src = this._origin + this._path;
         }
     },
 
     getItem: function(key, callback){
-    	var request = {
-    			id: ++this._id,
-    			type: 'get',
-                key: key
-            },
-            data = {
-                request: request,
-                callback: callback
-            };
-    	if(jQuery){
-    		data.deferred = jQuery.Deferred();
+    	if(this.supported){
+	    	var request = {
+	    			id: ++this._id,
+	    			type: 'get',
+	                key: key
+	            },
+	            data = {
+	                request: request,
+	                callback: callback
+	            };
+	    	if(jQuery){
+	    		data.deferred = jQuery.Deferred();
+	    	}
+	
+	        if(this._iframeReady){
+	            this._sendRequest(data);
+	        }else{
+	            this._queue.push(data);
+	        }
+	        
+	        if(jQuery){
+	        	return data.deferred.promise();
+	        }
     	}
-
-        if(this._iframeReady){
-            this._sendRequest(data);
-        }else{
-            this._queue.push(data);
-        }
-        
-        if(jQuery){
-        	return data.deferred.promise();
-        }
     },
 
     setItem: function(key, value){
-    	var request = {
-    			id: ++this._id,
-    			type: 'set',
-                key: key,
-                value: value
-            },
-            data = {
-                request: request
-            };
-    	if(jQuery){
-    		data.deferred = jQuery.Deferred();
+    	if(this.supported){
+	    	var request = {
+	    			id: ++this._id,
+	    			type: 'set',
+	                key: key,
+	                value: value
+	            },
+	            data = {
+	                request: request
+	            };
+	    	if(jQuery){
+	    		data.deferred = jQuery.Deferred();
+	    	}
+	
+	        if(this._iframeReady){
+	            this._sendRequest(data);
+	        }else{
+	            this._queue.push(data);
+	        }
+	        
+	        if(jQuery){
+	        	return data.deferred.promise();
+	        }
     	}
-
-        if(this._iframeReady){
-            this._sendRequest(data);
-        }else{
-            this._queue.push(data);
-        }
-        
-        if(jQuery){
-        	return data.deferred.promise();
-        }
     },
 
     //private methods

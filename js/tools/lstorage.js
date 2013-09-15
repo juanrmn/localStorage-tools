@@ -21,7 +21,7 @@ function LStorage(max_items, name){
             return false;
         }
     };
-    this._supports = this._check_supports();
+    this.supported = this._check_supports();
 
     this.get = function(key){
         if(this._qkeys.indexOf(key) != -1){
@@ -44,7 +44,7 @@ function LStorage(max_items, name){
         }
         this._qkeys.push(key);
         
-        if(this._supports){
+        if(this.supported){
             this._setItem(this.name, JSON.stringify(this._qkeys));
         }
     };
@@ -60,7 +60,7 @@ function LStorage(max_items, name){
         this._qkeys.push(key);
         this._items[key] = item;
         
-        if(this._supports){
+        if(this.supported){
             this._setItem(this.name, JSON.stringify(this._items));
             this._setItem(this._meta_name, JSON.stringify(this._qkeys));
         }
@@ -79,7 +79,7 @@ function LStorage(max_items, name){
     };
     
     //Init
-    if(this._supports){
+    if(this.supported){
         meta = this._getItem(this._meta_name);
         if(meta != null){
         	this._qkeys = JSON.parse(meta);

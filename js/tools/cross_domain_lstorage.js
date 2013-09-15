@@ -24,21 +24,23 @@ function CDLStorage(max_items, name, storage){
             return false;
         }
     };
-    this._supports = this._check_supports();
+    this.supported = this._check_supports();
     
     this.ready = function(callback){
-    	var that = this;
-
-        $.when(
-        	this.storage.init()
-        	, this.storage.getItem(this._meta_name)
-        	, this.storage.getItem(this.name)
-        ).done(function(init, meta, items){
-        	that.init_received(meta, items);
-        	callback();
-        });
+    	if(this.supported){
+	    	var that = this;
+	
+	        $.when(
+	        	this.storage.init()
+	        	, this.storage.getItem(this._meta_name)
+	        	, this.storage.getItem(this.name)
+	        ).done(function(init, meta, items){
+	        	that._init_received(meta, items);
+	        	callback();
+	        });
+    	}
     }
-    this.init_received = function(meta, item_list){
+    this._init_received = function(meta, item_list){
     	if(meta != undefined){
     		this._qkeys = JSON.parse(meta);
     	}
@@ -60,7 +62,7 @@ function CDLStorage(max_items, name, storage){
     };
 
     this.set = function (key, item){
-    	if(item == undefined){
+    	if(typeof item == 'undefined'){
     		this._add_key(key);
     		return;
     	}
@@ -74,7 +76,7 @@ function CDLStorage(max_items, name, storage){
         this._qkeys.push(key);
         this._items[key] = item;
         
-        if(this._supports){
+        if(this.supported){
         	this.storage.setItem(this.name, JSON.stringify(this._items));
         	this.storage.setItem(this._meta_name, JSON.stringify(this._qkeys));
         }
@@ -89,7 +91,7 @@ function CDLStorage(max_items, name, storage){
         }
         this._qkeys.push(key);
         
-        if(this._supports){
+        if(this.supported){
         	this.storage.setItem(this.name, JSON.stringify(this._qkeys));
         }
     };
