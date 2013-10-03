@@ -24,7 +24,7 @@ cross_domain_storage.js
 
 Cross domain storage based on: http://www.nczonline.net/blog/2010/09/07/learning-from-xauth-cross-domain-localstorage/
 
-You need to put the **crossd_iframe.html** in your server, and add your domain to the **whitelist** (allowed domains) var in the file.
+You need to put the **crossd_iframe.html** file in your server, and add your domain to the **whitelist** (allowed domains) var in the file.
 
 Constructor:
 * CDStorage(origin, path);
