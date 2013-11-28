@@ -6,8 +6,8 @@
 <script type="text/javascript">
 (function(){
 
-    //allowed domains
-    var whitelist = ["localhost", "gaia"];
+    //allowed domains (that can use RegExp)
+    var whitelist = ["localhost", "gaia", "^.*\.domain\.com"];
 
     function verifyOrigin(origin){
         var domain = origin.replace(/^https?:\/\/|:\d{1,4}$/g, "").toLowerCase(),
@@ -15,7 +15,7 @@
             len = whitelist.length;
 
         while(i < len){
-            if (whitelist[i] == domain){
+            if (domain.match(new RegExp(whitelist[i]){
                 return true;
             }
             i++;
