@@ -14,9 +14,11 @@ Some tools to extend the javascript localStorage feature: Cross-domain localStor
 
 **There are some use examples in the index.html file.**
 
-*Note:*
+*Notes:*
 
-*In order to see the stored values, in Chrome you can go to "Right click->Inspect element->Resources" and unfold the Local Storage tree.*
+* *In order to see the stored values, in Chrome you can go to "Right click->Inspect element->Resources" and unfold the Local Storage tree.*
+
+* *You have to include the [json3](http://bestiejs.github.io/json3/) library in order to get it working on IE8 and IE9*
 
 
 cross_domain_storage.js
@@ -24,7 +26,7 @@ cross_domain_storage.js
 
 Cross domain storage based on: http://www.nczonline.net/blog/2010/09/07/learning-from-xauth-cross-domain-localstorage/
 
-You need to put the **crossd_iframe.html** in your server, and add your domain to the **whitelist** (allowed domains) var in the file.
+You need to put the **crossd_iframe.html** file in your server, and add your domain to the **whitelist** (allowed domains) var in the file.
 
 Constructor:
 * CDStorage(origin, path);

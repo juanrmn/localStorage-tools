@@ -62,7 +62,7 @@ CDStorage.prototype = {
                     request: request,
                     callback: callback
                 };
-            if(jQuery){
+            if(window.jQuery){
                 data.deferred = jQuery.Deferred();
             }
     
@@ -72,7 +72,7 @@ CDStorage.prototype = {
                 this._queue.push(data);
             }
             
-            if(jQuery){
+            if(window.jQuery){
                 return data.deferred.promise();
             }
         }
@@ -89,7 +89,7 @@ CDStorage.prototype = {
                 data = {
                     request: request
                 };
-            if(jQuery){
+            if(window.jQuery){
                 data.deferred = jQuery.Deferred();
             }
     
@@ -99,7 +99,7 @@ CDStorage.prototype = {
                 this._queue.push(data);
             }
             
-            if(jQuery){
+            if(window.jQuery){
                 return data.deferred.promise();
             }
         }
