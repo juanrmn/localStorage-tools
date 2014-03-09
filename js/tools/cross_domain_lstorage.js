@@ -13,7 +13,7 @@ function CDLStorage(max_items, name, storage){
 
     this._items = {};
     this._qkeys = [];
-    this._meta_name = this.name + '_lstorage_meta';
+    this._meta_name = this.name + '_ls_meta';
 
     this.storage = storage;
 
@@ -36,7 +36,9 @@ function CDLStorage(max_items, name, storage){
                 , this.storage.getItem(this.name)
             ).done(function(init, meta, items){
                 that._init_received(meta, items);
-                callback();
+                if(typeof callback == 'function'){
+                    callback();
+                }
             });
         }
     }
@@ -92,7 +94,7 @@ function CDLStorage(max_items, name, storage){
         this._qkeys.push(key);
         
         if(this.supported){
-            this.storage.setItem(this.name, JSON.stringify(this._qkeys));
+            this.storage.setItem(this._meta_name, JSON.stringify(this._qkeys));
         }
     };
 }

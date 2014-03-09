@@ -12,7 +12,7 @@ function LStorage(max_items, name){
 
     this._items = {};
     this._qkeys = [];
-    this._meta_name = this.name + '_lstorage_meta';
+    this._meta_name = this.name + '_ls_meta';
 
     this._check_supports = function(){
         try{
@@ -45,7 +45,7 @@ function LStorage(max_items, name){
         this._qkeys.push(key);
         
         if(this.supported){
-            this._setItem(this.name, JSON.stringify(this._qkeys));
+            this._setItem(this._meta_name, JSON.stringify(this._qkeys));
         }
     };
 
