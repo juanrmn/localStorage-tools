@@ -169,8 +169,9 @@ cdls2.ready(function(){
 //...
 cdls2.ready(function(){
     for(var i = 0; i<=1000; i++){
-	if(cdls2.exists("cross_list-"+i))
-	    document.getElementById('results').innerHTML += "<br/>found: cross_list-"+i;
+        if(cdls2.exists("cross_list-"+i)){
+            document.getElementById('results').innerHTML += "<br/>found: cross_list-"+i;
+        }
     }
 });
 ```
