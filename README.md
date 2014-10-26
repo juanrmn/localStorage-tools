@@ -85,6 +85,7 @@ lstorage.js
 -----------
 
 Stores a given maximum number of elements in localStorage.
+It can be used as a dictionary with key-value pairs.
 
 *It's a queue: if the limit is reached, then first in - first out.*
 *If a previously present item is added (with `set(key, item)` method), it will be put last in the queue again.*
@@ -94,14 +95,13 @@ Constructor:
   max_items Max number of items to store
   var_name Var name in localStorage
 
-It can be used as a dictionary with key-value pairs. **Functions**: 
-
+Functions: 
   * set(key, value)
     `value` must be serializable by JSON.stringify method.
   * get(key)
     If `key` does not exists, returns null
   * del(key)
-    Delete the item associated with the key
+    Delete the item associated with the `key`
   * get_all()
     Returns a copy of the stored dictionary
       
@@ -132,6 +132,25 @@ cross_domain_lstorage.js
 Stores a given maximum number of elements which can be shared between different domains.
 
 It uses **jQuery, cross_domain_storage.js and crossd_iframe.html files**.
+
+Constructor:
+* CDLStorage(max_items, name, storage)
+  max_items Max items stored (default: 100)
+  name Var name in the shared local storage space (default: '_items')
+  storage A CDStorage instance (cross_domain_storage.js)
+
+Functions: 
+  * ready(callback)
+    Callback function will be executed when the object is ready to use.
+  * set(key, value)
+    `value` must be serializable by JSON.stringify method.
+  * get(key, callback)
+    The callback function will be called with two parameters: `key` and `value`.
+    If `key` does not exists, value will be null
+  * del(key)
+    Delete the item associated with the `key`
+  * get_all()
+    Returns a copy of the stored dictionary
 
 ### Usage example:
 
