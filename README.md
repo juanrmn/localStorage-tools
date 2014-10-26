@@ -43,8 +43,10 @@ Functions:
 ### Usage example: 
   
 ```javascript
-//If you are testing in your local computer, you can leave the default values in the crossd_iframe.html file, then
-//switch the url between "localhost" and "127.0.0.1", and see in the localStorage how it works (see previous Notes).
+//If you are testing in your local computer, you can leave the default values in
+// the crossd_iframe.html file, then switch the url between "localhost" and "127.0.0.1", 
+// and see in the localStorage of your browser how it works (see previous Notes).
+
 //Once you've added your domain to the `whitelist` in the crossd_iframe.html:
 Storage = new CDStorage("http://www.example.com", "/path/to/iframe.html");
 Storage.init();
