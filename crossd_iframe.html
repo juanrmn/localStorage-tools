@@ -7,7 +7,7 @@
 (function(){
 
     //allowed domains (that can use RegExp)
-    var whitelist = ["localhost", "gaia", "^.*\.domain\.com"];
+    var whitelist = ["localhost", "127.0.0.1", "^.*\.domain\.com"];
 
     function verifyOrigin(origin){
         var domain = origin.replace(/^https?:\/\/|:\d{1,4}$/g, "").toLowerCase(),

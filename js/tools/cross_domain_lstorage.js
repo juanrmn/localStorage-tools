@@ -2,102 +2,118 @@
  * Store an item list with a given maximun number of elements in "cross domain storage".
  * @author Juan Ramón González Hidalgo
  * 
- * @param max_items Max items stored
- * @param name Var name
+ * @param max_items Max items stored (default: 100)
+ * @param name Var name in the shared local storage space (default: '_items')
  * @param storage A CDStorage instance (cross_domain_storage.js)
  */
 function CDLStorage(max_items, name, storage){
 
-    this.max_items = (typeof max_items !== 'undefined') ? max_items : 200;
-    this.name = (typeof name !== 'undefined') ? name : '_items';
+    var max_items = (typeof max_items !== 'undefined') ? max_items : 200;
+    var name = (typeof name !== 'undefined') ? name : '_items';
 
-    this._items = {};
-    this._qkeys = [];
-    this._meta_name = this.name + '_ls_meta';
+    var _items = {}; //Dictionary with (key,value) pairs
+    var _qkeys = []; //Key list
+    var _meta_name = this.name + '_ls_meta'; //Name to store _qkeys in the shared localStorage space 
 
-    this.storage = storage;
+    var storage = storage;
 
-    this._check_supports = function(){
+    var supported =(function(){
         try{
             return window.JSON && 'localStorage' in window && window['localStorage'] !== null;
         }catch(e){
             return false;
         }
+    })();
+    
+    //Private methods
+    
+    var _init_received = function(meta, item_list){
+        if(meta != undefined){
+            _qkeys = JSON.parse(meta);
+        }
+        if(item_list != undefined){
+            _items = JSON.parse(item_list);
+        }
+    }
+    
+    var _add_key = function (key){
+        while(_qkeys.length >= max_items){
+            oldest_key = _qkeys.shift();
+        }
+        if(_qkeys.indexOf(key) != -1){
+            delete _qkeys[key];
+        }
+        _qkeys.push(key);
+        
+        if(supported){
+            storage.setItem(_meta_name, JSON.stringify(_qkeys));
+        }
     };
-    this.supported = this._check_supports();
+    
+    //Public methods
     
     this.ready = function(callback){
-        if(this.supported){
-            var that = this;
+        if(supported){
     
             $.when(
-                this.storage.init()
-                , this.storage.getItem(this._meta_name)
-                , this.storage.getItem(this.name)
+                storage.init()
+                , storage.getItem(_meta_name)
+                , storage.getItem(name)
             ).done(function(init, meta, items){
-                that._init_received(meta, items);
+                _init_received(meta, items);
                 if(typeof callback == 'function'){
                     callback();
                 }
             });
         }
     }
-    this._init_received = function(meta, item_list){
-        if(meta != undefined){
-            this._qkeys = JSON.parse(meta);
-        }
-        if(item_list != undefined){
-            this._items = JSON.parse(item_list);
-        }
-    }
     
     this.get = function(key){
-        if(this._qkeys.indexOf(key) != -1){
-            return this._items[key];
+        if(_qkeys.indexOf(key) != -1){
+            return _items[key];
         }else{
             return null;
         }
     };
 
-    this.exists = function (key){
-        return (this._qkeys.indexOf(key) != -1);
-    };
-
     this.set = function (key, item){
         if(typeof item == 'undefined'){
-            this._add_key(key);
+            _add_key(key);
             return;
         }
-        while(this._qkeys.length >= this.max_items){
-            oldest_key = this._qkeys.shift();
-            delete this._items[oldest_key];
+        while(_qkeys.length >= max_items){
+            oldest_key = _qkeys.shift();
+            delete _items[oldest_key];
         }
-        if(this._qkeys.indexOf(key) != -1){
-            this._qkeys.splice(key);
+        if(_qkeys.indexOf(key) != -1){
+            delete _qkeys[key];
         }
-        this._qkeys.push(key);
-        this._items[key] = item;
+        _qkeys.push(key);
+        _items[key] = item;
         
-        if(this.supported){
-            this.storage.setItem(this.name, JSON.stringify(this._items));
-            this.storage.setItem(this._meta_name, JSON.stringify(this._qkeys));
+        if(supported){
+            storage.setItem(name, JSON.stringify(_items));
+            storage.setItem(_meta_name, JSON.stringify(_qkeys));
         }
     };
     
-    this._add_key = function (key){
-        while(this._qkeys.length >= this.max_items){
-            oldest_key = this._qkeys.shift();
+    this.del = function(key){
+        if(_qkeys.indexOf(key) != -1){
+            delete _qkeys[key];
+            delete _items[key];
         }
-        if(this._qkeys.indexOf(key) != -1){
-            this._qkeys.splice(key);
-        }
-        this._qkeys.push(key);
         
-        if(this.supported){
-            this.storage.setItem(this._meta_name, JSON.stringify(this._qkeys));
+        if(supported){
+            storage.setItem(name, JSON.stringify(_items));
+            storage.setItem(_meta_name, JSON.stringify(_qkeys));
         }
     };
+    
+    this.get_all = function(){
+        return _items;
+    };
 }
+
 //From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf:
 if (!Array.prototype.indexOf) {
     Array.prototype.indexOf = function (searchElement /*, fromIndex */ ) {

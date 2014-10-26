@@ -2,91 +2,95 @@
  * Store an item list with a given maximun number of elements in localStorage.
  * @author Juan Ramón González Hidalgo
  * 
- * @param max_items Max items stored
- * @param name Var name
+ * @param max_items Max items stored (default: 100)
+ * @param name Var name in the local storage space (default: '_items')
  */
 function LStorage(max_items, name){
 
-    this.max_items = (typeof max_items !== 'undefined') ? max_items : 100;
-    this.name = (typeof name !== 'undefined') ? name : '_items';
+    var max_items = (typeof max_items !== 'undefined') ? max_items : 100;
+    var name = (typeof name !== 'undefined') ? name : '_items';
 
-    this._items = {};
-    this._qkeys = [];
-    this._meta_name = this.name + '_ls_meta';
+    var _items = {}; //Dictionary with (key,value) pairs
+    var _qkeys = []; //Key list
+    var _meta_name = name + '_ls_meta'; //Name to store _qkeys in the localStorage space 
 
-    this._check_supports = function(){
+    var supported = (function(){
         try{
             return window.JSON && 'localStorage' in window && window['localStorage'] !== null;
         }catch(e){
             return false;
         }
-    };
-    this.supported = this._check_supports();
-
-    this.get = function(key){
-        if(this._qkeys.indexOf(key) != -1){
-            return this._items[key];
-        }else{
-            return null;
-        }
-    };
-
-    this.exists = function (key){
-        return (this._qkeys.indexOf(key) != -1);
-    };
+    })();
     
-    this.add = function (key){
-        while(this._qkeys.length >= this.max_items){
-            oldest_key = this._qkeys.shift();
-        }
-        if(this._qkeys.indexOf(key) != -1){
-            this._qkeys.splice(key);
-        }
-        this._qkeys.push(key);
-        
-        if(this.supported){
-            this._setItem(this._meta_name, JSON.stringify(this._qkeys));
-        }
-    };
-
-    this.set = function (key, item){
-        while(this._qkeys.length >= this.max_items){
-            oldest_key = this._qkeys.shift();
-            delete this._items[oldest_key];
-        }
-        if(this._qkeys.indexOf(key) != -1){
-            this._qkeys.splice(key);
-        }
-        this._qkeys.push(key);
-        this._items[key] = item;
-        
-        if(this.supported){
-            this._setItem(this.name, JSON.stringify(this._items));
-            this._setItem(this._meta_name, JSON.stringify(this._qkeys));
-        }
-    };
-
     //private methods
-    this._getItem = function(key){
+    
+    var _getItem = function(key){
         return localStorage.getItem(key);
     };
-    this._setItem = function(key, value){
+    var _setItem = function(key, value){
         try{
             localStorage.setItem(key, value);
         }catch(e){
             //localStorage limit reached!!
         }
     };
+
+    //Public methods
+    
+    this.get = function(key){
+        if(_qkeys.indexOf(key) != -1){
+            return _items[key];
+        }else{
+            return null;
+        }
+    };
+
+    this.set = function(key, item){
+        if(typeof item === 'undefined'){
+            item = '';
+        }
+        
+        while(_qkeys.length >= max_items){
+            oldest_key = _qkeys.shift();
+            delete _items[oldest_key];
+        }
+        if(_qkeys.indexOf(key) != -1){
+            delete _qkeys[key];
+        }
+        _qkeys.push(key);
+        _items[key] = item;
+        
+        if(supported){
+            _setItem(name, JSON.stringify(_items));
+            _setItem(_meta_name, JSON.stringify(_qkeys));
+        }
+    };
+    
+    this.del = function(key){
+        if(_qkeys.indexOf(key) != -1){
+            delete _qkeys[key];
+            delete _items[key];
+        }
+        
+        if(supported){
+            _setItem(name, JSON.stringify(_items));
+            _setItem(_meta_name, JSON.stringify(_qkeys));
+        }
+    };
+    
+    this.get_all = function(){
+        return _items;
+    };
     
     //Init
-    if(this.supported){
-        meta = this._getItem(this._meta_name);
+    if(supported){
+        meta = _getItem(_meta_name);
         if(meta != null){
-            this._qkeys = JSON.parse(meta);
+            _qkeys = JSON.parse(meta);
         }
-        item_list = this._getItem(this.name);
+        item_list = _getItem(name);
         if(item_list != null){
-            this._items = JSON.parse(item_list);
+            _items = JSON.parse(item_list);
         }
     };
 }
@@ -122,4 +126,4 @@ if (!Array.prototype.indexOf) {
         }
         return -1;
     };
-}
+};

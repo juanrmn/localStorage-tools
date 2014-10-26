@@ -7,10 +7,10 @@ Some tools to extend the javascript localStorage feature: Cross-domain localStor
   It allows to share values in localStorage between different domains (or subdomains).
   
 * **js/tools/lstorage.js**
-  To store item lists with a given maximun number of elements in localStorage (avoid infinite growing).
+  To store a given maximum number of elements in localStorage (avoid infinite growing).
   
 * **js/tools/cross_domain_lstorage.js**
-  By using cross_domain_storaje.js, it stores item lists with a given maximun number of elements which can be shared between different domains.
+  By using cross_domain_storaje.js, it stores a given maximum number of elements which can be shared between different domains.
 
 **There are some use examples in the index.html file.**
 
@@ -43,6 +43,8 @@ Functions:
 ### Usage example: 
   
 ```javascript
+//If you are testing in your local computer, you can leave the default values in the crossd_iframe.html file, then
+//switch the url between "localhost" and "127.0.0.1", and see in the localStorage how it works (see previous Notes).
 //Once you've added your domain to the `whitelist` in the crossd_iframe.html:
 Storage = new CDStorage("http://www.example.com", "/path/to/iframe.html");
 Storage.init();
@@ -80,62 +82,52 @@ $.when(
 lstorage.js
 -----------
 
-Store item lists with a given maximun number of elements in localStorage.
+Stores item lists with a given maximum number of elements in localStorage.
 
 *It's a queue: if the limit is reached, then first in - first out.*
-*If a previously present item is added (with either `set(key, item)` or `add(key)` methods), it will be put last in the queue again.*
+*If a previously present item is added (with `set(key, item)` method), it will be put last in the queue again.*
 
 Constructor:
 * LStorage(max_items, var_name)
   max_items Max number of items to store
   var_name Var name in localStorage
 
-It can be used as:
-* a dictionary with key-value pairs. **Functions**: 
-    * set(key, value)
-      `value` must be serializable by JSON.stringify method.
-    * get(key)
-       If `key` does not exists, returns null
-       
-* an item list. **Functions**:
-    * add(item)
-      Add `item` to the list.
-    * exists(item)
-      Returns true if `item` is in the list.
+It can be used as a dictionary with key-value pairs. **Functions**: 
+
+  * set(key, value)
+    `value` must be serializable by JSON.stringify method.
+  * get(key)
+    If `key` does not exists, returns null
+  * del(key)
+    Delete the item associated with the key
+  * get_all()
+    Returns a copy of the stored dictionary
       
 ### Usage example:
 
 ```javascript
-ls1 = new LStorage(20, 'local_1');
-ls2 = new LStorage(500, 'local_2');
+ls1 = new LStorage(20, 'local_1'); //max: 20 items
 
-//Note that the specified number of items (20 and 500) are smaller 
-//than the number of keys to store (100 and 1000 respectively)
-for(var i = 0; i<=100; i++)
-    ls1.set("key-"+i, {'val': 'value'+i});
-			    
+//Note that the specified number of max items (20) are smaller 
+//than the number of keys to store in the following loop (100):
+for(var i = 0; i<=100; i++){
+    ls1.set("key-"+i, {'a_tag': 'a value - '+i, 'other_tag': 'other value - '+i});
+}
+                
+//There must be only the last 20 values
 for(var i = 0; i<=100; i++){
     value = ls1.get("key-"+i);
-    if(value){
+    if(value != null){
         //you'll need a <div id="results"></div> in your test page...
         document.getElementById('results').innerHTML += "<br/>found: key-"+i+", value: "+JSON.stringify(value);
     }
-}
-			
-//a simple list...
-for(var i = 0; i<=1000; i++)
-    ls2.add("values_"+i);
-			    
-for(var i = 0; i<=1000; i++){
-    if(ls2.exists("values_"+i))
-        document.getElementById('results').innerHTML += "<br/>found: key-"+i;
 }
 ```
 
 cross_domain_lstorage.js
 ------------------------
 
-Store item lists with a given maximun number of elements which can be shared between different domains.
+Stores a given maximum number of elements which can be shared between different domains.
 
 It uses **jQuery, cross_domain_storage.js and crossd_iframe.html files**.
 
@@ -144,34 +136,19 @@ It uses **jQuery, cross_domain_storage.js and crossd_iframe.html files**.
 ```javascript
 //Cross Domain Storage Configuration (required cross_domain_storage.js and crossd_iframe.html files).
 //Also you have to include your "origin domain" in the whitelist in crossd_iframe.html (in this case would be
-// "localhost" or perhaps your computer name if you are doing local testing...):
+// "localhost" or perhaps your computer name or IP if you are doing local testing...):
 storage = new CDStorage("http://localhost", "/localStorage/crossd_iframe.html");
 
-cdls1 = new CDLStorage(5, 'crossD_storage', storage);
-cdls2 = new CDLStorage(20, 'crossD_storage_2', storage);
-
-cdls1.ready(function(){
-    cdls1.set("cross_key", {'a_key':'Cross Domain Data Stored!!! :D', 'another_key':'yea'});
-
-    if(cdls1.exists("cross_key")){
-        value = cdls1.get("cross_key");
-        //you'll need a <div id="results"></div> in your test page...
-        document.getElementById('results').innerHTML += "<br/>cros_key: " + JSON.stringify(value);
-    }
-});
-
-cdls2.ready(function(){
-    for(var i = 0; i&lt;=1000; i++){
-        cdls2.set("cross_list-"+i);
-    }
+cdls = new CDLStorage(20, 'crossD_storage', storage);//max: 20 items
+            
+cdls.ready(function(){
+    //The value can be a string or JSON object:
+    cdls.set("cross_key", {'a_key':'Cross Domain data', 'another_key':'another Cross Domain data...'});
+                
     //...
-});
-//...
-cdls2.ready(function(){
-    for(var i = 0; i<=1000; i++){
-        if(cdls2.exists("cross_list-"+i)){
-            document.getElementById('results').innerHTML += "<br/>found: cross_list-"+i;
-        }
+    var cdvalue = cdls.get("cross_key");
+    if(cdvalue != null){
+        document.getElementById('results').innerHTML += "<br/><br/>Cross Domain list value: " + JSON.stringify(cdvalue) + "<br/><br/>";
     }
 });
 ```
