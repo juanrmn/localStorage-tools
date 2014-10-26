@@ -84,7 +84,7 @@ $.when(
 lstorage.js
 -----------
 
-Stores item lists with a given maximum number of elements in localStorage.
+Stores a given maximum number of elements in localStorage.
 
 *It's a queue: if the limit is reached, then first in - first out.*
 *If a previously present item is added (with `set(key, item)` method), it will be put last in the queue again.*
