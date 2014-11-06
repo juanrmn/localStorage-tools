@@ -36,10 +36,9 @@
              */
              
             cdstorage = new CDStorage("http://localhost", "/localStorage/crossd_iframe.html");
-            cdstorage.init();
             
-            //Once the object is initialized, we can set or get values from a shared localStorage space:
-                
+            //Now we can use the object to set or get values from a shared localStorage space:
+            
             cdstorage.setItem('a_cd_key', "The value should be a string, or it will be converted to string..");
             //This will store the previous value asynchronously, so we need callbacks to get it:
                 function print_result(key, val){

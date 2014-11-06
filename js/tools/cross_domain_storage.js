@@ -7,54 +7,59 @@
  * @param path Path to iframe html file in origin
  */
 function CDStorage(origin, path){
-    this._iframe = null;
-    this._iframeReady = false;
-    this._origin = origin;
-    this._path = path;
-    this._queue = [];
-    this._requests = {};
-    this._id = 0;
+    var _iframe = null;
+    var _iframeReady = false;
+    var _origin = origin;
+    var _path = path;
+    var _queue = [];
+    var _requests = {};
+    var _id = 0;
     
-    this._check_supports = function(){
+    var supported = (function(){
         try{
             return window.postMessage && window.JSON && 'localStorage' in window && window['localStorage'] !== null;
         }catch(e){
             return false;
         }
-    };
-    this.supported = this._check_supports();
-}
+    })();
 
-/** 
- * Cross domain storage 
- * 
- */
-CDStorage.prototype = {
-    constructor: CDStorage,
-
-    init: function(){
-        var that = this;
-
-        if(!this._iframe && this.supported){
-            this._iframe = document.createElement("iframe");
-            this._iframe.style.cssText = "position:absolute;width:1px;height:1px;left:-9999px;";
-            document.body.appendChild(this._iframe);
-
-            if(window.addEventListener){
-                this._iframe.addEventListener("load", function(){ that._iframeLoaded(); }, false);
-                window.addEventListener("message", function(event){ that._handleMessage(event); }, false);
-            }else if(this._iframe.attachEvent){
-                this._iframe.attachEvent("onload", function(){ that._iframeLoaded(); }, false);
-                window.attachEvent("onmessage", function(event){ that._handleMessage(event); });
-            }
-            this._iframe.src = this._origin + this._path;
+    //private methods
+    var _sendRequest = function(data){
+        if(_iframe){
+            _requests[data.request.id] = data;
+            _iframe.contentWindow.postMessage(JSON.stringify(data.request), _origin);
         }
-    },
+    };
 
-    getItem: function(key, callback){
-        if(this.supported){
+    var _iframeLoaded = function(){
+        _iframeReady = true;
+        if(_queue.length){
+            for (var i=0, len=_queue.length; i < len; i++){
+                _sendRequest(_queue[i]);
+            }
+            _queue = [];
+        }
+    };
+
+    var _handleMessage = function(event){
+        if(event.origin == _origin){
+            var data = JSON.parse(event.data);
+            if(typeof _requests[data.id].deferred != 'undefined'){
+                _requests[data.id].deferred.resolve(data.value);
+            }
+            if(typeof _requests[data.id].callback == 'function'){
+                _requests[data.id].callback(data.key, data.value);
+            }
+            delete _requests[data.id];
+        }
+    }
+
+    //Public methods
+
+    this.getItem = function(key, callback){
+        if(supported){
             var request = {
-                    id: ++this._id,
+                    id: ++_id,
                     type: 'get',
                     key: key
                 },
@@ -66,22 +71,22 @@ CDStorage.prototype = {
                 data.deferred = jQuery.Deferred();
             }
     
-            if(this._iframeReady){
-                this._sendRequest(data);
+            if(_iframeReady){
+                _sendRequest(data);
             }else{
-                this._queue.push(data);
+                _queue.push(data);
             }
             
             if(window.jQuery){
                 return data.deferred.promise();
             }
         }
-    },
+    };
 
-    setItem: function(key, value){
-        if(this.supported){
+    this.setItem = function(key, value){
+        if(supported){
             var request = {
-                    id: ++this._id,
+                    id: ++_id,
                     type: 'set',
                     key: key,
                     value: value
@@ -93,47 +98,31 @@ CDStorage.prototype = {
                 data.deferred = jQuery.Deferred();
             }
     
-            if(this._iframeReady){
-                this._sendRequest(data);
+            if(_iframeReady){
+                _sendRequest(data);
             }else{
-                this._queue.push(data);
+                _queue.push(data);
             }
             
             if(window.jQuery){
                 return data.deferred.promise();
             }
         }
-    },
+    };
 
-    //private methods
-    _sendRequest: function(data){
-        if(this._iframe){
-            this._requests[data.request.id] = data;
-            this._iframe.contentWindow.postMessage(JSON.stringify(data.request), this._origin);
+    //Init
+    if(!_iframe && supported){
+        _iframe = document.createElement("iframe");
+        _iframe.style.cssText = "position:absolute;width:1px;height:1px;left:-9999px;";
+        document.body.appendChild(_iframe);
+
+        if(window.addEventListener){
+            _iframe.addEventListener("load", function(){ _iframeLoaded(); }, false);
+            window.addEventListener("message", function(event){ _handleMessage(event) }, false);
+        }else if(_iframe.attachEvent){
+            _iframe.attachEvent("onload", function(){ _iframeLoaded(); }, false);
+            window.attachEvent("onmessage", function(event){ _handleMessage(event) });
         }
-    },
-
-    _iframeLoaded: function(){
-        this._iframeReady = true;
-
-        if(this._queue.length){
-            for (var i=0, len=this._queue.length; i < len; i++){
-                this._sendRequest(this._queue[i]);
-            }
-            this._queue = [];
-        }
-    },
-
-    _handleMessage: function(event){
-        if(event.origin == this._origin){
-            var data = JSON.parse(event.data);
-            if(typeof this._requests[data.id].deferred != 'undefined'){
-                this._requests[data.id].deferred.resolve(data.value);
-            }
-            if(typeof this._requests[data.id].callback == 'function'){
-                this._requests[data.id].callback(data.key, data.value);
-            }
-            delete this._requests[data.id];
-        }
+        _iframe.src = _origin + _path;
     }
-};
+}

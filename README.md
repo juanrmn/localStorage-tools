@@ -49,9 +49,10 @@ Functions:
 
 //Once you've added your domain to the `whitelist` in the crossd_iframe.html:
 Storage = new CDStorage("http://www.example.com", "/path/to/iframe.html");
-Storage.init();
+
 //...
 Storage.setItem('key', 'value');
+
 //...
 Storage.getItem('key', callback_function);
 
@@ -70,11 +71,10 @@ If you are using jQuery (>=1.5), also you can do:
 ```javascript
 Storage = new CDStorage("http://www.example.com", "/path/to/iframe.html");
 $.when(
-    Storage.init()
-    , Storage.getItem('key1')
+    Storage.getItem('key1')
     , Storage.getItem('key2')
     [, etc...]
-).done(function(response_init, response_key1, response_key2 [, etc...]){
+).done(function(response_key1, response_key2 [, etc...]){
     //response_key1 contains the value for the key1 ('undefined' if not found)
     //response_key2 contains the value for the key2 ('undefined' if not found)
     //etc...

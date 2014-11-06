@@ -8,6 +8,7 @@
 
     //allowed domains (that can use RegExp)
     var whitelist = ["localhost", "127.0.0.1", "^.*\.domain\.com"];
+    
 
     function verifyOrigin(origin){
         var domain = origin.replace(/^https?:\/\/|:\d{1,4}$/g, "").toLowerCase(),

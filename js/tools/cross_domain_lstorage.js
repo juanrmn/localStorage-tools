@@ -56,10 +56,9 @@ function CDLStorage(max_items, name, storage){
         if(supported){
     
             $.when(
-                storage.init()
-                , storage.getItem(_meta_name)
+                storage.getItem(_meta_name)
                 , storage.getItem(name)
-            ).done(function(init, meta, items){
+            ).done(function(meta, items){
                 _init_received(meta, items);
                 if(typeof callback == 'function'){
                     callback();
