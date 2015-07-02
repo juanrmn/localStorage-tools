@@ -44,13 +44,15 @@ function CDStorage(origin, path){
     var _handleMessage = function(event){
         if(event.origin == _origin){
             var data = JSON.parse(event.data);
-            if(typeof _requests[data.id].deferred != 'undefined'){
-                _requests[data.id].deferred.resolve(data.value);
+            if(typeof _requests[data.id] != 'undefined'){
+                if(typeof _requests[data.id].deferred != 'undefined'){
+                    _requests[data.id].deferred.resolve(data.value);
+                }
+                if(typeof _requests[data.id].callback == 'function'){
+                    _requests[data.id].callback(data.key, data.value);
+                }
+                delete _requests[data.id];
             }
-            if(typeof _requests[data.id].callback == 'function'){
-                _requests[data.id].callback(data.key, data.value);
-            }
-            delete _requests[data.id];
         }
     }
 
