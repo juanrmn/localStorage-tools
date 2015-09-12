@@ -1,21 +1,20 @@
 /**
  * Store an item list with a given maximun number of elements in "cross domain storage".
  * @author Juan Ramón González Hidalgo
- * 
+ *
  * @param max_items Max items stored (default: 100)
  * @param name Var name in the shared local storage space (default: '_items')
- * @param storage A CDStorage instance (cross_domain_storage.js)
+ * @param storage A cross_domain_storage object (cross_domain_storage.js)
  */
-function CDLStorage(max_items, name, storage){
+function cross_domain_list_storage(storage, opts){
 
-    var max_items = (typeof max_items !== 'undefined') ? max_items : 200;
-    var name = (typeof name !== 'undefined') ? name : '_items';
+    var max_items = opts.max_items || 200
+        , name = opts.var_name || '_items'
+        , cdlstorage = {};
 
     var _items = {}; //Dictionary with (key,value) pairs
     var _qkeys = []; //Key list
-    var _meta_name = this.name + '_ls_meta'; //Name to store _qkeys in the shared localStorage space 
-
-    var storage = storage;
+    var _meta_name = this.name + '_ls_meta'; //Name to store _qkeys in the shared localStorage space
 
     var supported =(function(){
         try{
@@ -24,9 +23,9 @@ function CDLStorage(max_items, name, storage){
             return false;
         }
     })();
-    
+
     //Private methods
-    
+
     var _init_received = function(meta, item_list){
         if(meta != undefined){
             _qkeys = JSON.parse(meta);
@@ -35,7 +34,7 @@ function CDLStorage(max_items, name, storage){
             _items = JSON.parse(item_list);
         }
     }
-    
+
     var _add_key = function (key){
         while(_qkeys.length >= max_items){
             oldest_key = _qkeys.shift();
@@ -44,17 +43,16 @@ function CDLStorage(max_items, name, storage){
             delete _qkeys[key];
         }
         _qkeys.push(key);
-        
+
         if(supported){
             storage.setItem(_meta_name, JSON.stringify(_qkeys));
         }
     };
-    
+
     //Public methods
-    
-    this.ready = function(callback){
+
+    cdlstorage.ready = function(callback){
         if(supported){
-    
             $.when(
                 storage.getItem(_meta_name)
                 , storage.getItem(name)
@@ -66,8 +64,8 @@ function CDLStorage(max_items, name, storage){
             });
         }
     }
-    
-    this.get = function(key){
+
+    cdlstorage.get = function(key){
         if(_qkeys.indexOf(key) != -1){
             return _items[key];
         }else{
@@ -75,7 +73,7 @@ function CDLStorage(max_items, name, storage){
         }
     };
 
-    this.set = function (key, item){
+    cdlstorage.set = function (key, item){
         if(typeof item == 'undefined'){
             _add_key(key);
             return;
@@ -89,28 +87,30 @@ function CDLStorage(max_items, name, storage){
         }
         _qkeys.push(key);
         _items[key] = item;
-        
+
         if(supported){
             storage.setItem(name, JSON.stringify(_items));
             storage.setItem(_meta_name, JSON.stringify(_qkeys));
         }
     };
-    
-    this.del = function(key){
+
+    cdlstorage.del = function(key){
         if(_qkeys.indexOf(key) != -1){
             delete _qkeys[key];
             delete _items[key];
         }
-        
+
         if(supported){
             storage.setItem(name, JSON.stringify(_items));
             storage.setItem(_meta_name, JSON.stringify(_qkeys));
         }
     };
-    
-    this.get_all = function(){
+
+    cdlstorage.get_all = function(){
         return _items;
     };
+
+    return cdlstorage;
 }
 
 //From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf:

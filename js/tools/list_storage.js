@@ -1,19 +1,22 @@
 /**
  * Store an item list with a given maximun number of elements in localStorage.
  * @author Juan Ramón González Hidalgo
- * 
- * @param max_items Max items stored (default: 100)
- * @param name Var name in the local storage space (default: '_items')
+ *
+ * @param opts JSON object with the attribute names:
+ *      - max_items Max items stored (default: 100)
+ *      - var_name Var name in the local storage space (default: '_items')
  */
-function LStorage(max_items, name){
+function list_storage(opts){
 
-    var max_items = (typeof max_items !== 'undefined') ? max_items : 100;
-    var name = (typeof name !== 'undefined') ? name : '_items';
+    var max_items = opts.max_items || 100
+        , name = opts.var_name || '_items'
+        , lstorage = {};
 
     var _items = {}; //Dictionary with (key,value) pairs
     var _qkeys = []; //Key list
-    var _meta_name = name + '_ls_meta'; //Name to store _qkeys in the localStorage space 
+    var _meta_name = name + '_ls_meta'; //Name to store _qkeys in the localStorage space
 
+    //Checks localStorage support
     var supported = (function(){
         try{
             return window.JSON && 'localStorage' in window && window['localStorage'] !== null;
@@ -21,9 +24,8 @@ function LStorage(max_items, name){
             return false;
         }
     })();
-    
+
     //private methods
-    
     var _getItem = function(key){
         return localStorage.getItem(key);
     };
@@ -36,8 +38,8 @@ function LStorage(max_items, name){
     };
 
     //Public methods
-    
-    this.get = function(key){
+
+    lstorage.get = function(key){
         if(_qkeys.indexOf(key) != -1){
             return _items[key];
         }else{
@@ -45,11 +47,11 @@ function LStorage(max_items, name){
         }
     };
 
-    this.set = function(key, item){
+    lstorage.set = function(key, item){
         if(typeof item === 'undefined'){
             item = '';
         }
-        
+
         while(_qkeys.length >= max_items){
             oldest_key = _qkeys.shift();
             delete _items[oldest_key];
@@ -59,29 +61,29 @@ function LStorage(max_items, name){
         }
         _qkeys.push(key);
         _items[key] = item;
-        
+
         if(supported){
             _setItem(name, JSON.stringify(_items));
             _setItem(_meta_name, JSON.stringify(_qkeys));
         }
     };
-    
-    this.del = function(key){
+
+    lstorage.del = function(key){
         if(_qkeys.indexOf(key) != -1){
             delete _qkeys[key];
             delete _items[key];
         }
-        
+
         if(supported){
             _setItem(name, JSON.stringify(_items));
             _setItem(_meta_name, JSON.stringify(_qkeys));
         }
     };
-    
-    this.get_all = function(){
+
+    lstorage.get_all = function(){
         return _items;
     };
-    
+
     //Init
     if(supported){
         meta = _getItem(_meta_name);
@@ -93,7 +95,10 @@ function LStorage(max_items, name){
             _items = JSON.parse(item_list);
         }
     };
+
+    return lstorage;
 }
+
 //From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf:
 if (!Array.prototype.indexOf) {
     Array.prototype.indexOf = function (searchElement /*, fromIndex */ ) {

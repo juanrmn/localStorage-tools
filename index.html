@@ -1,28 +1,28 @@
 <html>
     <head>
         <script type="text/javascript" src="js/jquery.js"></script>
-        <script type="text/javascript" src="js/tools/lstorage.js"></script>
+        <script type="text/javascript" src="js/tools/list_storage.js"></script>
         <script type="text/javascript" src="js/tools/cross_domain_storage.js"></script>
-        <script type="text/javascript" src="js/tools/cross_domain_lstorage.js"></script>
+        <script type="text/javascript" src="js/tools/cross_domain_list_storage.js"></script>
     </head>
     <body>
         <script type="text/javascript">
         $(document).ready(function(){
-            
-            /* 
+
+            /*
              * Testing Local Storage list
              */
-            ls1 = new LStorage(20, 'local_1'); //max: 20 items
+            lstorage = list_storage({max_items: 20});
 
-            //Note that the specified number of max items (20) are smaller 
+            //Note that the specified number of max items (20) are smaller
             //than the number of keys to store in the following loop (100):
             for(var i = 0; i<=100; i++){
-                ls1.set("key-"+i, {'a_tag': 'a value - '+i, 'other_tag': 'other value - '+i});
+                lstorage.set("key-"+i, {'a_tag': 'a value - '+i, 'other_tag': 'other value - '+i});
             }
-                
+
             //There must be only the last 20 values
             for(var i = 0; i<=100; i++){
-                value = ls1.get("key-"+i);
+                value = lstorage.get("key-"+i);
                 if(value != null){
                     //you'll need a <div id="results"></div> in your test page...
                     document.getElementById('results').innerHTML += "<br/>found: key-"+i+", value: "+JSON.stringify(value);
@@ -30,34 +30,32 @@
             }
 
             document.getElementById('results').innerHTML += "<br/>-----------------------<br/>";
-                        
+
             /*
              * Testing Cross Domain Local Storage
              */
-             
-            cdstorage = new CDStorage("http://localhost", "/localStorage/crossd_iframe.html");
-            
+            cdstorage = cross_domain_storage({origin: "http://localhost", path: "/localStorage/crossd_iframe.html"});
+
             //Now we can use the object to set or get values from a shared localStorage space:
-            
-            cdstorage.setItem('a_cd_key', "The value should be a string, or it will be converted to string..");
+
+            cdstorage.setItem('a_cross-domain_key', "The value should be a string, or it will be converted to string..");
             //This will store the previous value asynchronously, so we need callbacks to get it:
                 function print_result(key, val){
                     document.getElementById('results').innerHTML += "<br/>Cross Domain callback: (" + key + ": " + val + ")";
                 }
-            cdstorage.getItem('a_cd_key', print_result);
-            
+            cdstorage.getItem('a_cross-domain_key', print_result);
+
             /*
              * We can also use the previous 'cdstorage' object to create a cross domain list with a max number of items:
              */
-            
-            cdls = new CDLStorage(20, 'crossD_storage', cdstorage);//max: 20 items
-            
-            cdls.ready(function(){
+            cdlstorage = cross_domain_list_storage(cdstorage, {max_items: 20, var_name: 'crossD_storage'});
+
+            cdlstorage.ready(function(){
                 //The value can be a string or JSON object:
-                cdls.set("cross_key", {'a_key':'Cross Domain data', 'another_key':'another Cross Domain data...'});
-                
+                cdlstorage.set("cross_key", {'a_key':'Cross Domain data', 'another_key':'another Cross Domain data...'});
+
                 //...
-                var cdvalue = cdls.get("cross_key");
+                var cdvalue = cdlstorage.get("cross_key");
                 if(cdvalue != null){
                     document.getElementById('results').innerHTML += "<br/><br/>Cross Domain list value: " + JSON.stringify(cdvalue) + "<br/><br/>";
                 }
