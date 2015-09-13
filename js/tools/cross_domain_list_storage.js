@@ -8,9 +8,9 @@
  */
 function cross_domain_list_storage(storage, opts){
 
-    var max_items = opts.max_items || 200
-        , name = opts.var_name || '_items'
-        , cdlstorage = {};
+    var max_items = opts.max_items || 100,
+        name = opts.var_name || '_items',
+        cdlstorage = {};
 
     var _items = {}; //Dictionary with (key,value) pairs
     var _qkeys = []; //Key list

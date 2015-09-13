@@ -9,17 +9,16 @@
  */
 function cross_domain_storage(opts){
 
-    var origin = opts.origin || ''
-        , path = opts.path || ''
-        , cdstorage = {};
-
-    var _iframe = null
-        , _iframeReady = false
-        , _origin = origin
-        , _path = path
-        , _queue = []
-        , _requests = {}
-        , _id = 0;
+    var origin = opts.origin || '',
+        path = opts.path || '',
+        cdstorage = {},
+        _iframe = null,
+        _iframeReady = false,
+        _origin = origin,
+        _path = path,
+        _queue = [],
+        _requests = {},
+        _id = 0;
 
     var supported = (function(){
         try{
@@ -30,6 +29,7 @@ function cross_domain_storage(opts){
     })();
 
     //private methods
+    
     var _sendRequest = function(data){
         if(_iframe){
             _requests[data.request.id] = data;

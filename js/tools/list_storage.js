@@ -8,9 +8,9 @@
  */
 function list_storage(opts){
 
-    var max_items = opts.max_items || 100
-        , name = opts.var_name || '_items'
-        , lstorage = {};
+    var max_items = opts.max_items || 100,
+        name = opts.var_name || '_items',
+        lstorage = {};
 
     var _items = {}; //Dictionary with (key,value) pairs
     var _qkeys = []; //Key list
@@ -26,6 +26,7 @@ function list_storage(opts){
     })();
 
     //private methods
+    
     var _getItem = function(key){
         return localStorage.getItem(key);
     };
