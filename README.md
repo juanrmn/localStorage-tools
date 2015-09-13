@@ -48,7 +48,11 @@ It returns an object with the following functions:
 // and see in the localStorage of your browser how it works (see previous Notes).
 
 //Once you've added your domain to the `whitelist` in the crossd_iframe.html:
-Storage = cross_domain_storage({origin: "http://www.example.com", path: "/path/to/iframe.html"});
+var options = {
+    origin: "http://www.example.com",
+    path: "/path/to/iframe.html"
+};
+Storage = cross_domain_storage(options);
 
 //...
 Storage.setItem('key', 'value');
@@ -69,7 +73,7 @@ function callback_function(key, value){
 If you are using jQuery (>=1.5), also you can use 'promises':
 
 ```javascript
-Storage = cross_domain_storage({origin: "http://www.example.com", path: "/path/to/iframe.html"});
+Storage = cross_domain_storage(options);
 $.when(
     Storage.getItem('key1')
     , Storage.getItem('key2')
@@ -160,9 +164,13 @@ It returns an object with the following functions:
 //Also you have to include your "origin domain" in the whitelist in crossd_iframe.html (in this case would be
 // "localhost" or perhaps your computer name or IP if you are doing local testing...):
 
-storage = cross_domain_storage("http://localhost", "/localStorage/crossd_iframe.html");
+var options = {
+    origin: "http://localhost",
+    path: "/localStorage/crossd_iframe.html"
+};
+Storage = cross_domain_storage(options);
 
-cdls = cross_domain_list_storage(storage, {max_items: 20, var_name: 'crossD_storage'});
+cdls = cross_domain_list_storage(Storage, {max_items: 20, var_name: 'crossD_storage'});
 
 cdls.ready(function(){
     //The value can be a string or JSON object:
