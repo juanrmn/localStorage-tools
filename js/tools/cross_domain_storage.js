@@ -3,18 +3,23 @@
  * Based on: http://www.nczonline.net/blog/2010/09/07/learning-from-xauth-cross-domain-localstorage/
  * @author Juan Ramón González Hidalgo
  *
- * @param origin Iframe URL
- * @param path Path to iframe html file in origin
+ * @param opts JSON object with the attribute names:
+ *      - origin Iframe URL
+ *      - path Path to iframe html file in origin
  */
-function CDStorage(origin, path){
-    var _iframe = null;
-    var _iframeReady = false;
-    var _origin = origin;
-    var _path = path;
-    var _queue = [];
-    var _requests = {};
-    var _id = 0;
-    
+function cross_domain_storage(opts){
+
+    var origin = opts.origin || '',
+        path = opts.path || '',
+        cdstorage = {},
+        _iframe = null,
+        _iframeReady = false,
+        _origin = origin,
+        _path = path,
+        _queue = [],
+        _requests = {},
+        _id = 0;
+
     var supported = (function(){
         try{
             return window.postMessage && window.JSON && 'localStorage' in window && window['localStorage'] !== null;
@@ -24,6 +29,7 @@ function CDStorage(origin, path){
     })();
 
     //private methods
+    
     var _sendRequest = function(data){
         if(_iframe){
             _requests[data.request.id] = data;
@@ -58,7 +64,7 @@ function CDStorage(origin, path){
 
     //Public methods
 
-    this.getItem = function(key, callback){
+    cdstorage.getItem = function(key, callback){
         if(supported){
             var request = {
                     id: ++_id,
@@ -72,20 +78,20 @@ function CDStorage(origin, path){
             if(window.jQuery){
                 data.deferred = jQuery.Deferred();
             }
-    
+
             if(_iframeReady){
                 _sendRequest(data);
             }else{
                 _queue.push(data);
             }
-            
+
             if(window.jQuery){
                 return data.deferred.promise();
             }
         }
     };
 
-    this.setItem = function(key, value){
+    cdstorage.setItem = function(key, value){
         if(supported){
             var request = {
                     id: ++_id,
@@ -99,13 +105,13 @@ function CDStorage(origin, path){
             if(window.jQuery){
                 data.deferred = jQuery.Deferred();
             }
-    
+
             if(_iframeReady){
                 _sendRequest(data);
             }else{
                 _queue.push(data);
             }
-            
+
             if(window.jQuery){
                 return data.deferred.promise();
             }
@@ -127,4 +133,6 @@ function CDStorage(origin, path){
         }
         _iframe.src = _origin + _path;
     }
+
+    return cdstorage;
 }
