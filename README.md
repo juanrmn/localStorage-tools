@@ -62,9 +62,9 @@ Storage.getItem('key', callback_function);
 
 function callback_function(key, value){
     //if key was not present, value will be 'undefined'
-	if(value != 'undefined'){
+	if (value !== 'undefined') {
         //...
-    }else{
+    } else {
         //key not found...
     }
 }
@@ -116,14 +116,14 @@ lstorage = list_storage({max_items: 20, var_name: 'local_1'}); //max: 20 items
 
 //Note that the specified number of max items (20) are smaller
 //than the number of keys to store in the following loop (100):
-for(var i = 0; i<=100; i++){
+for (var i = 0; i<=100; i++) {
     lstorage.set("key-"+i, {'a_tag': 'a value - '+i, 'other_tag': 'other value - '+i});
 }
 
 //There must be only the last 20 values
-for(var i = 0; i<=100; i++){
+for (var i = 0; i<=100; i++) {
     value = lstorage.get("key-"+i);
-    if(value != null){
+    if (value !== null) {
         //you'll need a <div id="results"></div> in your test page...
         document.getElementById('results').innerHTML += "<br/>found: key-"+i+", value: "+JSON.stringify(value);
     }
@@ -178,7 +178,7 @@ cdls.ready(function(){
 
     //...
     var cdvalue = cdls.get("cross_key");
-    if(cdvalue != null){
+    if (cdvalue !== null) {
         document.getElementById('results').innerHTML += "<br/><br/>Cross Domain list value: " + JSON.stringify(cdvalue) + "<br/><br/>";
     }
 });
