@@ -29,9 +29,9 @@ function cross_domain_storage(opts){
     })();
 
     //private methods
-    
+
     var _sendRequest = function(data){
-        if(_iframe){
+        if (_iframe) {
             _requests[data.request.id] = data;
             _iframe.contentWindow.postMessage(JSON.stringify(data.request), _origin);
         }
@@ -39,7 +39,7 @@ function cross_domain_storage(opts){
 
     var _iframeLoaded = function(){
         _iframeReady = true;
-        if(_queue.length){
+        if (_queue.length) {
             for (var i=0, len=_queue.length; i < len; i++){
                 _sendRequest(_queue[i]);
             }
@@ -48,13 +48,13 @@ function cross_domain_storage(opts){
     };
 
     var _handleMessage = function(event){
-        if(event.origin == _origin){
+        if (event.origin === _origin) {
             var data = JSON.parse(event.data);
-            if(typeof _requests[data.id] != 'undefined'){
-                if(typeof _requests[data.id].deferred != 'undefined'){
+            if (typeof _requests[data.id] != 'undefined') {
+                if (typeof _requests[data.id].deferred !== 'undefined') {
                     _requests[data.id].deferred.resolve(data.value);
                 }
-                if(typeof _requests[data.id].callback == 'function'){
+                if (typeof _requests[data.id].callback === 'function') {
                     _requests[data.id].callback(data.key, data.value);
                 }
                 delete _requests[data.id];
@@ -65,7 +65,7 @@ function cross_domain_storage(opts){
     //Public methods
 
     cdstorage.getItem = function(key, callback){
-        if(supported){
+        if (supported) {
             var request = {
                     id: ++_id,
                     type: 'get',
@@ -75,24 +75,24 @@ function cross_domain_storage(opts){
                     request: request,
                     callback: callback
                 };
-            if(window.jQuery){
+            if (window.jQuery) {
                 data.deferred = jQuery.Deferred();
             }
 
-            if(_iframeReady){
+            if (_iframeReady) {
                 _sendRequest(data);
-            }else{
+            } else {
                 _queue.push(data);
             }
 
-            if(window.jQuery){
+            if (window.jQuery) {
                 return data.deferred.promise();
             }
         }
     };
 
     cdstorage.setItem = function(key, value){
-        if(supported){
+        if (supported) {
             var request = {
                     id: ++_id,
                     type: 'set',
@@ -102,32 +102,32 @@ function cross_domain_storage(opts){
                 data = {
                     request: request
                 };
-            if(window.jQuery){
+            if (window.jQuery) {
                 data.deferred = jQuery.Deferred();
             }
 
-            if(_iframeReady){
+            if (_iframeReady) {
                 _sendRequest(data);
-            }else{
+            } else {
                 _queue.push(data);
             }
 
-            if(window.jQuery){
+            if (window.jQuery) {
                 return data.deferred.promise();
             }
         }
     };
 
     //Init
-    if(!_iframe && supported){
+    if (!_iframe && supported) {
         _iframe = document.createElement("iframe");
         _iframe.style.cssText = "position:absolute;width:1px;height:1px;left:-9999px;";
         document.body.appendChild(_iframe);
 
-        if(window.addEventListener){
+        if (window.addEventListener) {
             _iframe.addEventListener("load", function(){ _iframeLoaded(); }, false);
             window.addEventListener("message", function(event){ _handleMessage(event) }, false);
-        }else if(_iframe.attachEvent){
+        } else if (_iframe.attachEvent) {
             _iframe.attachEvent("onload", function(){ _iframeLoaded(); }, false);
             window.attachEvent("onmessage", function(event){ _handleMessage(event) });
         }

@@ -27,24 +27,24 @@ function cross_domain_list_storage(storage, opts){
     //Private methods
 
     var _init_received = function(meta, item_list){
-        if(meta != undefined){
+        if (typeof meta !== 'undefined') {
             _qkeys = JSON.parse(meta);
         }
-        if(item_list != undefined){
+        if (typeof item_list !== 'undefined') {
             _items = JSON.parse(item_list);
         }
     }
 
     var _add_key = function (key){
-        while(_qkeys.length >= max_items){
+        while (_qkeys.length >= max_items) {
             oldest_key = _qkeys.shift();
         }
-        if(_qkeys.indexOf(key) != -1){
+        if (_qkeys.indexOf(key) !== -1) {
             delete _qkeys[key];
         }
         _qkeys.push(key);
 
-        if(supported){
+        if (supported) {
             storage.setItem(_meta_name, JSON.stringify(_qkeys));
         }
     };
@@ -52,13 +52,13 @@ function cross_domain_list_storage(storage, opts){
     //Public methods
 
     cdlstorage.ready = function(callback){
-        if(supported){
+        if (supported) {
             $.when(
                 storage.getItem(_meta_name)
                 , storage.getItem(name)
             ).done(function(meta, items){
                 _init_received(meta, items);
-                if(typeof callback == 'function'){
+                if (typeof callback === 'function') {
                     callback();
                 }
             });
@@ -66,41 +66,41 @@ function cross_domain_list_storage(storage, opts){
     }
 
     cdlstorage.get = function(key){
-        if(_qkeys.indexOf(key) != -1){
+        if (_qkeys.indexOf(key) !== -1) {
             return _items[key];
-        }else{
+        } else {
             return null;
         }
     };
 
     cdlstorage.set = function (key, item){
-        if(typeof item == 'undefined'){
+        if (typeof item === 'undefined') {
             _add_key(key);
             return;
         }
-        while(_qkeys.length >= max_items){
+        while (_qkeys.length >= max_items) {
             oldest_key = _qkeys.shift();
             delete _items[oldest_key];
         }
-        if(_qkeys.indexOf(key) != -1){
+        if (_qkeys.indexOf(key) !== -1) {
             delete _qkeys[key];
         }
         _qkeys.push(key);
         _items[key] = item;
 
-        if(supported){
+        if (supported) {
             storage.setItem(name, JSON.stringify(_items));
             storage.setItem(_meta_name, JSON.stringify(_qkeys));
         }
     };
 
     cdlstorage.del = function(key){
-        if(_qkeys.indexOf(key) != -1){
+        if (_qkeys.indexOf(key) !== -1) {
             delete _qkeys[key];
             delete _items[key];
         }
 
-        if(supported){
+        if (supported) {
             storage.setItem(name, JSON.stringify(_items));
             storage.setItem(_meta_name, JSON.stringify(_qkeys));
         }

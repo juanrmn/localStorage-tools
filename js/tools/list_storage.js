@@ -26,7 +26,7 @@ function list_storage(opts){
     })();
 
     //private methods
-    
+
     var _getItem = function(key){
         return localStorage.getItem(key);
     };
@@ -41,41 +41,41 @@ function list_storage(opts){
     //Public methods
 
     lstorage.get = function(key){
-        if(_qkeys.indexOf(key) != -1){
+        if (_qkeys.indexOf(key) !== -1) {
             return _items[key];
-        }else{
+        } else {
             return null;
         }
     };
 
     lstorage.set = function(key, item){
-        if(typeof item === 'undefined'){
+        if (typeof item === 'undefined') {
             item = '';
         }
 
-        while(_qkeys.length >= max_items){
+        while (_qkeys.length >= max_items) {
             oldest_key = _qkeys.shift();
             delete _items[oldest_key];
         }
-        if(_qkeys.indexOf(key) != -1){
+        if (_qkeys.indexOf(key) !== -1) {
             delete _qkeys[key];
         }
         _qkeys.push(key);
         _items[key] = item;
 
-        if(supported){
+        if (supported) {
             _setItem(name, JSON.stringify(_items));
             _setItem(_meta_name, JSON.stringify(_qkeys));
         }
     };
 
     lstorage.del = function(key){
-        if(_qkeys.indexOf(key) != -1){
+        if (_qkeys.indexOf(key) !== -1) {
             delete _qkeys[key];
             delete _items[key];
         }
 
-        if(supported){
+        if (supported) {
             _setItem(name, JSON.stringify(_items));
             _setItem(_meta_name, JSON.stringify(_qkeys));
         }
@@ -88,11 +88,11 @@ function list_storage(opts){
     //Init
     if(supported){
         meta = _getItem(_meta_name);
-        if(meta != null){
+        if (meta !== null) {
             _qkeys = JSON.parse(meta);
         }
         item_list = _getItem(name);
-        if(item_list != null){
+        if (item_list !== null) {
             _items = JSON.parse(item_list);
         }
     };
