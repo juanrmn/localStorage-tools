@@ -88,7 +88,7 @@ limitedStorage.js
 -----------
 
 Stores a given maximum number of elements in localStorage or sessionStorage.
-It can be used as a dictionary with key-value pairs.
+It has the same methods than the localStorage and sessionStorage objects (getItem, setItem and removeItem), so it can be used the same way, taking into account that older objecsts will be deleted when the given limit is reached.
 
 *It's a queue: if the limit is reached, then first in - first out.*
 *If a previously present item is added (with `setItem(key, item)` method), it will be put last in the queue again.*
