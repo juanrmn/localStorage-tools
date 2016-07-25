@@ -115,12 +115,12 @@ lstorage = limitedStorage({maxItems: 20, prefix: '_test_'}); //max: 20 items
 //Note that the specified number of max items (20) are smaller
 //than the number of keys to store in the following loop (100):
 for (var i = 0; i<=100; i++) {
-    lstorage.set("key-"+i, {'a_tag': 'a value - '+i, 'other_tag': 'other value - '+i});
+    lstorage.setItem("key-"+i, {'a_tag': 'a value - '+i, 'other_tag': 'other value - '+i});
 }
 
 //There must be only the last 20 values
 for (var i = 0; i<=100; i++) {
-    value = lstorage.get("key-"+i);
+    value = lstorage.getItem("key-"+i);
     if (value !== null) {
         //you'll need a <div id="results"></div> in your test page...
         document.getElementById('results').innerHTML += "<br/>found: key-"+i+", value: "+JSON.stringify(value);
