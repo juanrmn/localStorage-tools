@@ -6,11 +6,14 @@
  * @param opts JSON object with the attribute names:
  *      - origin Iframe URL
  *      - path Path to iframe html file in origin
+ *      - storage String I.e: 'localStorage' OR 'sessionStorage' (default: 'localStorage')
+ *          Indeed, it can be any window global object which accepts getItem, setItem and removeItem methods.
  */
-function cross_domain_storage(opts){
+function crossDomainStorage(opts){
 
     var origin = opts.origin || '',
         path = opts.path || '',
+        storage = opts.storage || 'localStorage'
         cdstorage = {},
         _iframe = null,
         _iframeReady = false,
@@ -22,7 +25,7 @@ function cross_domain_storage(opts){
 
     var supported = (function(){
         try{
-            return window.postMessage && window.JSON && 'localStorage' in window && window['localStorage'] !== null;
+            return window.JSON && storage in window && window[storage] !== null;
         }catch(e){
             return false;
         }
@@ -69,7 +72,8 @@ function cross_domain_storage(opts){
             var request = {
                     id: ++_id,
                     type: 'get',
-                    key: key
+                    key: key,
+                    storage: storage
                 },
                 data = {
                     request: request,
@@ -97,7 +101,8 @@ function cross_domain_storage(opts){
                     id: ++_id,
                     type: 'set',
                     key: key,
-                    value: value
+                    value: value,
+                    storage: storage
                 },
                 data = {
                     request: request
@@ -117,6 +122,33 @@ function cross_domain_storage(opts){
             }
         }
     };
+
+    cdstorage.removeItem = function(key) {
+        if (supported) {
+            var request = {
+                    id: ++_id,
+                    type: 'remove',
+                    key: key,
+                    storage: storage
+                },
+                data = {
+                    request: request
+                };
+            if (window.jQuery) {
+                data.deferred = jQuery.Deferred();
+            }
+
+            if (_iframeReady) {
+                _sendRequest(data);
+            } else {
+                _queue.push(data);
+            }
+
+            if (window.jQuery) {
+                return data.deferred.promise();
+            }
+        }
+    }
 
     //Init
     if (!_iframe && supported) {

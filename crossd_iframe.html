@@ -15,8 +15,8 @@
             i = 0,
             len = whitelist.length;
 
-        while(i < len){
-            if (domain.match(new RegExp(whitelist[i]))){
+        while(i < len) {
+            if (domain.match(new RegExp(whitelist[i]))) {
                 return true;
             }
             i++;
@@ -26,28 +26,28 @@
     }
 
     function handleRequest(event){
-        if (verifyOrigin(event.origin)){
+        if (verifyOrigin(event.origin)) {
             var request = JSON.parse(event.data);
+            var storage = request.storage;
             
-            if(request.type == 'get')
-            {
-                value = localStorage.getItem(request.key);
-                event.source.postMessage(JSON.stringify({id: request.id, key:request.key, value: value}), event.origin);
-            }
-            else if(request.type == 'set')
-            {
-                localStorage.setItem(request.key, request.value);
-            }
-            else if(request.type == 'unset')
-            {
-                localStorage.removeItem(request.key);
+            if (request.type == 'get') {
+                value = window[storage].getItem(request.key);
+                event.source.postMessage(JSON.stringify({
+                    id: request.id,
+                    key:request.key,
+                    value: value
+                }), event.origin);
+            } else if (request.type == 'set') {
+                window[storage].setItem(request.key, request.value);
+            } else if(request.type == 'remove') {
+                window[storage].removeItem(request.key);
             }
         }
     }
 
-    if(window.addEventListener){
+    if(window.addEventListener) {
         window.addEventListener("message", handleRequest, false);
-    }else if (window.attachEvent){
+    } else if (window.attachEvent) {
         window.attachEvent("onmessage", handleRequest);
     }
 })();
